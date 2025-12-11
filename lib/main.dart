@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  //test
   // Web requires FirebaseOptions
   if (kIsWeb) {
     await Firebase.initializeApp(
