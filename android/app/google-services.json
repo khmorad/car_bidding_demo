@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "159466669112",
+    "project_id": "car-bidding-demo",
+    "storage_bucket": "car-bidding-demo.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:159466669112:android:75560d6e0315ed338712cd",
+        "android_client_info": {
+          "package_name": "com.example.car_bidding_system"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnrOgokqte565hoOhjdrzZwodW-VIRZYg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
