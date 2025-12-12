@@ -12,7 +12,7 @@ Future<void> main() async {
   if (kIsWeb) {
     await Firebase.initializeApp(
       options: FirebaseOptions(
-        apiKey: "AIzaSyCcg47oBxp8GYlBe7QaQQVv8-I4kKDdPxM",
+        apiKey: "",
         authDomain: "car-bidding-demo.firebaseapp.com",
         projectId: "car-bidding-demo",
         storageBucket: "car-bidding-demo.firebasestorage.app",
@@ -50,6 +50,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp.router(
       title: 'Car Bidding System',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
