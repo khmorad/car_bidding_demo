@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:go_router/go_router.dart';
+//import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import 'screens/makers_screen.dart';
+import 'screens/models_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //test
-  // Web requires FirebaseOptions
   if (kIsWeb) {
     await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: "AIzaSyBsKijSegp3LDk21xCqNL-RMcMULVmMsGQ",
+      options: FirebaseOptions(
+        apiKey: "",
         authDomain: "car-bidding-demo.firebaseapp.com",
         projectId: "car-bidding-demo",
         storageBucket: "car-bidding-demo.firebasestorage.app",
@@ -18,9 +21,6 @@ Future<void> main() async {
         measurementId: "G-44B35KCTY4",
       ),
     );
-  } else {
-    // Android/iOS/macOS use google-services.json or plist
-    await Firebase.initializeApp();
   }
 
   runApp(const MyApp());
@@ -31,30 +31,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    final router = GoRouter(
+      initialLocation: '/',
+      routes: [
+        GoRoute(path: '/', builder: (context, state) => MakersScreen()),
+        GoRoute(
+          path: '/models/:makerId',
+          builder: (context, state) {
+            final makerId = state.pathParameters['makerId']!;
+            final makerName = state.uri.queryParameters['makerName'] ?? '';
+            return ModelsScreen(makerId: makerId, makerName: makerName);
+          },
+        ),
+      ],
+    );
+
+    return MaterialApp.router(
       title: 'Car Bidding System',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Car Bidding System')),
-      body: const Center(
-        child: Text(
-          "Firebase Connected ✔ (Web)",
-          style: TextStyle(fontSize: 22),
-        ),
-      ),
+      routerConfig: router,
     );
   }
 }
