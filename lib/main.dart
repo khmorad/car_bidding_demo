@@ -12,7 +12,7 @@ Future<void> main() async {
   if (kIsWeb) {
     await Firebase.initializeApp(
       options: FirebaseOptions(
-        apiKey: "AIzaSyCcg47oBxp8GYlBe7QaQQVv8-I4kKDdPxM",
+        apiKey: "",
         authDomain: "car-bidding-demo.firebaseapp.com",
         projectId: "car-bidding-demo",
         storageBucket: "car-bidding-demo.firebasestorage.app",
