@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:go_router/go_router.dart';
 //import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-import 'screens/makers_screen.dart';
-import 'screens/models_screen.dart';
+import 'router/app_router.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
     await Firebase.initializeApp(
       options: FirebaseOptions(
-        apiKey: "",
+        apiKey: "AIzaSyCcg47oBxp8GYlBe7QaQQVv8-I4kKDdPxM",
         authDomain: "car-bidding-demo.firebaseapp.com",
         projectId: "car-bidding-demo",
         storageBucket: "car-bidding-demo.firebasestorage.app",
@@ -33,21 +31,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final router = GoRouter(
-      initialLocation: '/',
-      routes: [
-        GoRoute(path: '/', builder: (context, state) => MakersScreen()),
-        GoRoute(
-          path: '/models/:makerId',
-          builder: (context, state) {
-            final makerId = state.pathParameters['makerId']!;
-            final makerName = state.uri.queryParameters['makerName'] ?? '';
-            return ModelsScreen(makerId: makerId, makerName: makerName);
-          },
-        ),
-      ],
-    );
-
     return MaterialApp.router(
       title: 'Car Bidding System',
       debugShowCheckedModeBanner: false,
@@ -55,7 +38,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      routerConfig: router,
+      routerConfig: appRouter,
     );
   }
 }

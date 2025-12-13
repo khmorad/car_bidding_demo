@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../services/makers_service.dart';
 import '../models/maker.dart';
-import 'models_screen.dart';
 
 class MakersScreen extends StatelessWidget {
   MakersScreen({super.key});
