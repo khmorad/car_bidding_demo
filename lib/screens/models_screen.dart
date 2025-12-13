@@ -18,7 +18,7 @@ class ModelsScreen extends StatelessWidget {
         title: Text('$makerName Models'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/'),
+          onPressed: () => context.go('/makers'),
         ),
       ),
       body: StreamBuilder<List<CarModel>>(
