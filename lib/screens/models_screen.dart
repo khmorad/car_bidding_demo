@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../services/model_service.dart';
 import '../models/model.dart';
 
@@ -13,7 +14,13 @@ class ModelsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('$makerName Models')),
+      appBar: AppBar(
+        title: Text('$makerName Models'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.go('/makers'),
+        ),
+      ),
       body: StreamBuilder<List<CarModel>>(
         stream: _modelsService.getModelsByMaker(makerId),
         builder: (context, snapshot) {
