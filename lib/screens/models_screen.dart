@@ -55,6 +55,9 @@ class ModelsScreen extends StatelessWidget {
                 title: Text(model.name),
                 subtitle: Text('Year: ${model.year}'),
                 trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  context.push('/model', extra: model);
+                },
               );
             },
           );
