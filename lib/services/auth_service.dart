@@ -8,20 +8,38 @@ class AuthService {
     final query = await _db
         .collection('users')
         .where('email', isEqualTo: email)
-        .where('password', isEqualTo: password)
         .limit(1)
         .get();
 
     if (query.docs.isEmpty) return null;
 
     final doc = query.docs.first;
-    return UserModel.fromFirestore(doc.data(), doc.id);
+    final userData = doc.data();
+
+    // Check password manually
+    if (userData['password'] != password) {
+      return null;
+    }
+
+    return UserModel.fromFirestore(userData, doc.id);
   }
 
   Future<UserModel> register(String email, String password) async {
+    // Check if email already exists
+    final existing = await _db
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .limit(1)
+        .get();
+
+    if (existing.docs.isNotEmpty) {
+      throw Exception('Email already registered');
+    }
+
     final doc = await _db.collection('users').add({
       'email': email,
       'password': password,
+      'createdAt': FieldValue.serverTimestamp(),
     });
 
     return UserModel(id: doc.id, email: email, password: password);
