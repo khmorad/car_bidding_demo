@@ -48,7 +48,7 @@ class _ModelDetailScreenState extends State<ModelDetailScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            /// LIVE BIDS
+            /// LIVE BIDS - Single source of truth
             Expanded(
               child: StreamBuilder<List<BidModel>>(
                 stream: _bidService.streamBidsForModel(widget.model.id),
@@ -57,38 +57,102 @@ class _ModelDetailScreenState extends State<ModelDetailScreen> {
                     return const Center(child: CircularProgressIndicator());
                   }
 
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Error loading bids: ${snapshot.error}'),
+                    );
+                  }
+
+                  // Derive all state from stream
                   final bids = snapshot.data ?? [];
                   final highestBid = bids.isNotEmpty ? bids.first.amount : 0.0;
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Highest Bid: \$${highestBid.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontSize: 18,
+                      Card(
+                        color: Colors.deepPurple.shade50,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Highest Bid:',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                '\$${highestBid.toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Bid History',
+                        style: TextStyle(
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'Recent Bids',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
                       const SizedBox(height: 8),
                       Expanded(
-                        child: ListView.builder(
-                          itemCount: bids.length,
-                          itemBuilder: (context, index) {
-                            final bid = bids[index];
-                            return ListTile(
-                              title: Text('\$${bid.amount.toStringAsFixed(2)}'),
-                              subtitle: Text(
-                                bid.createdAt.toLocal().toString(),
+                        child: bids.isEmpty
+                            ? const Center(
+                                child: Text('No bids yet. Be the first!'),
+                              )
+                            : ListView.builder(
+                                itemCount: bids.length,
+                                itemBuilder: (context, index) {
+                                  final bid = bids[index];
+                                  final isHighest = index == 0;
+
+                                  return Card(
+                                    color: isHighest
+                                        ? Colors.green.shade50
+                                        : null,
+                                    child: ListTile(
+                                      leading: Icon(
+                                        isHighest
+                                            ? Icons.emoji_events
+                                            : Icons.monetization_on,
+                                        color: isHighest
+                                            ? Colors.amber
+                                            : Colors.grey,
+                                      ),
+                                      title: Text(
+                                        '\$${bid.amount.toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                          fontWeight: isHighest
+                                              ? FontWeight.bold
+                                              : FontWeight.normal,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                        '${bid.createdAt.toLocal().toString().substring(0, 19)}',
+                                      ),
+                                      trailing: isHighest
+                                          ? const Chip(
+                                              label: Text('Leading'),
+                                              backgroundColor: Colors.green,
+                                              labelStyle: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            )
+                                          : null,
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
                       ),
                     ],
                   );
@@ -96,42 +160,99 @@ class _ModelDetailScreenState extends State<ModelDetailScreen> {
               ),
             ),
 
-            /// PLACE BID
-            const Divider(),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _bidController,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
+            /// PLACE BID with validation
+            const Divider(height: 32),
+            StreamBuilder<List<BidModel>>(
+              stream: _bidService.streamBidsForModel(widget.model.id),
+              builder: (context, snapshot) {
+                final currentHighestBid = (snapshot.data?.isNotEmpty ?? false)
+                    ? snapshot.data!.first.amount
+                    : 0.0;
+
+                return Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _bidController,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        decoration: InputDecoration(
+                          labelText: 'Enter bid amount',
+                          hintText:
+                              'Minimum: \$${(currentHighestBid + 1).toStringAsFixed(2)}',
+                          border: const OutlineInputBorder(),
+                          prefixText: '\$ ',
+                        ),
+                      ),
                     ),
-                    decoration: const InputDecoration(
-                      labelText: 'Enter bid amount',
-                      border: OutlineInputBorder(),
+                    const SizedBox(width: 12),
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        final amount = double.tryParse(
+                          _bidController.text.trim(),
+                        );
+
+                        // Validation before write
+                        if (amount == null || amount <= 0) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Please enter a valid amount'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        if (amount <= currentHighestBid) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Bid must be higher than \$${currentHighestBid.toStringAsFixed(2)}',
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        try {
+                          // Write to Firestore
+                          await _bidService.placeBid(
+                            modelId: widget.model.id,
+                            userId: userId,
+                            amount: amount,
+                          );
+
+                          _bidController.clear();
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Bid placed successfully!'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Failed to place bid: $e'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.gavel),
+                      label: const Text('Place Bid'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 16,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                ElevatedButton(
-                  onPressed: () async {
-                    final amount = double.tryParse(_bidController.text.trim());
-
-                    if (amount == null || amount <= 0) {
-                      return;
-                    }
-
-                    await _bidService.placeBid(
-                      modelId: widget.model.id,
-                      userId: userId,
-                      amount: amount,
-                    );
-
-                    _bidController.clear();
-                  },
-                  child: const Text('Place Bid'),
-                ),
-              ],
+                  ],
+                );
+              },
             ),
           ],
         ),
