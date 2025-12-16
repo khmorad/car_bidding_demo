@@ -271,6 +271,14 @@ class _MakerCard extends StatelessWidget {
 
   const _MakerCard({required this.maker});
 
+  String _getLogoPath() {
+    // Convert maker name to lowercase and replace spaces with underscores
+    final formattedName = maker.name.toLowerCase().replaceAll(' ', '_');
+    final path = 'assets/$formattedName.png';
+    print('Trying to load: $path for maker: ${maker.name}'); // Debug
+    return path;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -304,22 +312,39 @@ class _MakerCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                  ),
+                  color: Colors.white,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF667eea).withOpacity(0.3),
+                      color: const Color(0xFF667eea).withOpacity(0.2),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
                   ],
                 ),
-                child: const Icon(
-                  Icons.directions_car,
-                  size: 40,
-                  color: Colors.white,
+                child: Image.asset(
+                  _getLogoPath(),
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    print('Failed to load image for ${maker.name}: $error'); // Debug
+                    return Container(
+                      width: 40,
+                      height: 40,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+                        ),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.directions_car,
+                        size: 40,
+                        color: Colors.white,
+                      ),
+                    );
+                  },
                 ),
               ),
               const SizedBox(height: 16),

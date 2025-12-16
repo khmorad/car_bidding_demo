@@ -231,7 +231,10 @@ class _ModelsScreenState extends State<ModelsScreen> {
                       itemCount: models.length,
                       itemBuilder: (context, index) {
                         final model = models[index];
-                        return _ModelCard(model: model);
+                        return _ModelCard(
+                          model: model,
+                          makerName: widget.makerName,
+                        );
                       },
                     );
                   },
@@ -247,8 +250,17 @@ class _ModelsScreenState extends State<ModelsScreen> {
 
 class _ModelCard extends StatelessWidget {
   final CarModel model;
+  final String makerName;
 
-  const _ModelCard({required this.model});
+  const _ModelCard({
+    required this.model,
+    required this.makerName,
+  });
+
+  String _getLogoPath() {
+    final formattedName = makerName.toLowerCase().replaceAll(' ', '_');
+    return 'assets/$formattedName.png';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -283,22 +295,38 @@ class _ModelCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                    ),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF667eea).withOpacity(0.3),
+                        color: const Color(0xFF667eea).withOpacity(0.2),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-                  child: const Icon(
-                    Icons.directions_car,
-                    color: Colors.white,
-                    size: 32,
+                  child: Image.asset(
+                    _getLogoPath(),
+                    width: 32,
+                    height: 32,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 32,
+                        height: 32,
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.directions_car,
+                          color: Colors.white,
+                          size: 32,
+                        ),
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(width: 16),
