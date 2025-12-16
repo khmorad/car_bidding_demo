@@ -6,7 +6,7 @@ A full-stack Flutter application demonstrating real-time car bidding with Fireba
 [![Firebase](https://img.shields.io/badge/Firebase-Firestore-FFCA28?logo=firebase)](https://firebase.google.com)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-## ✨ Features
+## Features
 
 ### Core Functionality
 
@@ -47,7 +47,7 @@ A full-stack Flutter application demonstrating real-time car bidding with Fireba
 - **VS Code** / **Android Studio** - IDEs
 - **Firebase CLI** - Deployment and management
 
-## 🏗 Architecture
+## Architecture
 
 This project follows **Clean Architecture** principles with clear separation of concerns:
 
@@ -160,7 +160,7 @@ VS Code with Flutter extension
    flutter run
    ```
 
-## 🔥 Firebase Setup
+## Firebase Setup
 
 ### 1. Create Firebase Project
 
@@ -274,7 +274,7 @@ Deploy indexes:
 firebase deploy --only firestore:indexes
 ```
 
-## ☁️ Cloud Functions
+## Cloud Functions
 
 ### Import CSV Data Function
 
@@ -322,11 +322,11 @@ context.go('/model', extra: carModel);
 context.pop();
 ```
 
-## 📸 Screenshots
+## Screenshots
 
 still in progress
 
-## 📚 API Reference
+## API Reference
 
 ### AuthService
 
