@@ -328,7 +328,9 @@ class _MakerCard extends StatelessWidget {
                   height: 40,
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) {
-                    print('Failed to load image for ${maker.name}: $error'); // Debug
+                    print(
+                      'Failed to load image for ${maker.name}: $error',
+                    ); // Debug
                     return Container(
                       width: 40,
                       height: 40,

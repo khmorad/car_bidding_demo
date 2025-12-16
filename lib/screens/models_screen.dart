@@ -252,10 +252,7 @@ class _ModelCard extends StatelessWidget {
   final CarModel model;
   final String makerName;
 
-  const _ModelCard({
-    required this.model,
-    required this.makerName,
-  });
+  const _ModelCard({required this.model, required this.makerName});
 
   String _getLogoPath() {
     final formattedName = makerName.toLowerCase().replaceAll(' ', '_');
