@@ -78,7 +78,10 @@ class _SubModelScreenState extends State<SubModelScreen> {
                   itemBuilder: (context, index) {
                     final submodel = submodels[index];
                     return Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: ListTile(
                         title: Text(submodel.name),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
