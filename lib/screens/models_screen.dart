@@ -282,7 +282,8 @@ class _ModelCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            context.push('/model', extra: model);
+            // FIX: Navigate to /submodels with CarModel as extra
+            context.push('/submodels', extra: model);
           },
           borderRadius: BorderRadius.circular(16),
           child: Padding(

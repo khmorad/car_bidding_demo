@@ -6,11 +6,12 @@ import '../models/bid.dart';
 import '../services/bid_service.dart';
 import '../bloc/auth_cubit.dart';
 import '../bloc/auth_state.dart';
+import '../models/sub_model.dart';
 
 class ModelDetailScreen extends StatefulWidget {
-  final CarModel model;
+  final SubModel submodel;
 
-  const ModelDetailScreen({super.key, required this.model});
+  const ModelDetailScreen({super.key, required this.submodel});
 
   @override
   State<ModelDetailScreen> createState() => _ModelDetailScreenState();
@@ -73,44 +74,25 @@ class _ModelDetailScreenState extends State<ModelDetailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.model.name,
+                            widget.submodel.name,
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF2D3748),
                             ),
                           ),
-                          Text(
-                            'Year ${widget.model.year}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF718096),
-                            ),
-                          ),
+                          // Optionally display modelId or other info
                         ],
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(
-                        Icons.gavel,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
+                    // ...existing code...
                   ],
                 ),
               ),
               // Content
               Expanded(
                 child: StreamBuilder<List<BidModel>>(
-                  stream: _bidService.streamBidsForModel(widget.model.id),
+                  stream: _bidService.streamBidsForSubModel(widget.submodel.id),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
@@ -383,7 +365,7 @@ class _ModelDetailScreenState extends State<ModelDetailScreen> {
                   ],
                 ),
                 child: StreamBuilder<List<BidModel>>(
-                  stream: _bidService.streamBidsForModel(widget.model.id),
+                  stream: _bidService.streamBidsForSubModel(widget.submodel.id),
                   builder: (context, snapshot) {
                     final currentHighestBid =
                         (snapshot.data?.isNotEmpty ?? false)
@@ -464,7 +446,7 @@ class _ModelDetailScreenState extends State<ModelDetailScreen> {
 
                             try {
                               await _bidService.placeBid(
-                                modelId: widget.model.id,
+                                submodelId: widget.submodel.id,
                                 userId: userId,
                                 amount: amount,
                               );

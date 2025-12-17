@@ -2,14 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BidModel {
   final String id;
-  final String modelId;
+  final String submodelId;
   final String userId;
   final double amount;
   final DateTime createdAt;
 
   BidModel({
     required this.id,
-    required this.modelId,
+    required this.submodelId,
     required this.userId,
     required this.amount,
     required this.createdAt,
@@ -29,7 +29,7 @@ class BidModel {
 
     return BidModel(
       id: id,
-      modelId: data['model_id'] ?? '',
+      submodelId: data['submodel_id'] ?? '',
       userId: data['user_id'] ?? '',
       amount: (data['amount'] as num?)?.toDouble() ?? 0.0,
       createdAt: dateTime,

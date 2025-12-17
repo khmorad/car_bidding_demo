@@ -8,6 +8,9 @@
  */
 // force redeploy
 // Import necessary modules
+
+//run firebase deploy --only functions to deploy only functions
+//new
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const csv = require("csv-parser");
@@ -23,7 +26,7 @@ exports.importCars = functions.https.onRequest(async (req, res) => {
   try {
     const makers = [];
     const models = [];
-
+    const submodels = [];
     // Read makes CSV
     await new Promise((resolve, reject) => {
       bucket
@@ -45,15 +48,28 @@ exports.importCars = functions.https.onRequest(async (req, res) => {
         .on("end", resolve)
         .on("error", reject);
     });
-
+    // Read submodels CSV
+    await new Promise((resolve, reject) => {
+      bucket
+        .file("csv/submodels-sample.csv")
+        .createReadStream()
+        .pipe(csv())
+        .on("data", (row) => submodels.push(row))
+        .on("end", resolve)
+        .on("error", reject);
+    });
     // Write makers to Firestore
     const makerBatch = db.batch();
     makers.forEach((m) => {
       const ref = db.collection("makers").doc(String(m["Make Id"]));
-      makerBatch.set(ref, {
-        id: m["Make Id"],
-        name: m["Make Name"],
-      });
+      makerBatch.set(
+        ref,
+        {
+          id: m["Make Id"],
+          name: m["Make Name"],
+        },
+        { merge: true }
+      );
     });
     await makerBatch.commit();
 
@@ -61,14 +77,45 @@ exports.importCars = functions.https.onRequest(async (req, res) => {
     const modelBatch = db.batch();
     models.forEach((m) => {
       const ref = db.collection("models").doc(String(m["Model Id"]));
-      modelBatch.set(ref, {
-        id: m["Model Id"],
-        name: m["Model Name"],
-        make_id: m["Make Id"],
-        year: m["Model Year"],
-      });
+      modelBatch.set(
+        ref,
+        {
+          id: m["Model Id"],
+          name: m["Model Name"],
+          make_id: m["Make Id"],
+          year: m["Model Year"],
+        },
+        { merge: true }
+      );
     });
     await modelBatch.commit();
+
+    // Write submodels to Firestore
+    const submodelBatch = db.batch();
+    submodels.forEach((s) => {
+      const ref = db
+        .collection("models")
+        .doc(String(s["Model Id"]))
+        .collection("submodels")
+        .doc(String(s["Submodel Id"]));
+
+      // Build data object, omitting undefined, null, or empty string fields
+      const rawData = {
+        id: s["Submodel Id"],
+        name: s["Submodel Name"],
+        model_id: s["Model Id"],
+        year: s["Year"] ? String(s["Year"]).trim() : undefined,
+        trim: s["Trim"] ? String(s["Trim"]).trim() : undefined,
+      };
+      // Remove fields that are undefined, null, or empty string
+      const filteredData = Object.fromEntries(
+        Object.entries(rawData).filter(
+          ([_, v]) => v !== undefined && v !== null && v !== ""
+        )
+      );
+      submodelBatch.set(ref, filteredData, { merge: true });
+    });
+    await submodelBatch.commit();
 
     return res.status(200).send("Import complete!");
   } catch (error) {

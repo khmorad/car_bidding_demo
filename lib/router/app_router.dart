@@ -1,10 +1,12 @@
 import 'package:car_bidding_system/models/model.dart';
+import 'package:car_bidding_system/models/sub_model.dart';
 import 'package:car_bidding_system/screens/model_detail_screen.dart';
 import 'package:go_router/go_router.dart';
 import '../screens/login_screen.dart';
 import '../screens/signup_screen.dart';
 import '../screens/makers_screen.dart';
 import '../screens/models_screen.dart';
+import '../screens/submodels_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -23,8 +25,15 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/model',
       builder: (context, state) {
+        final submodel = state.extra as SubModel;
+        return ModelDetailScreen(submodel: submodel);
+      },
+    ),
+    GoRoute(
+      path: '/submodels',
+      builder: (context, state) {
         final model = state.extra as CarModel;
-        return ModelDetailScreen(model: model);
+        return SubModelScreen(model: model);
       },
     ),
   ],
