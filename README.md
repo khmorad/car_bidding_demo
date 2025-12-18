@@ -215,7 +215,7 @@ context.go('/makers');
 
 ## Screenshots
 
-still in progress
+Screenshots will be added once UI polish is complete.
 
 ## Services
 
