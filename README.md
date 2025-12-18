@@ -8,6 +8,7 @@ A full-stack Flutter application demonstrating real-time car bidding with Fireba
 
 ## Features
 
+
 ### Core Functionality
 
 - **User Authentication** - Email/password login and registration
@@ -25,6 +26,9 @@ A full-stack Flutter application demonstrating real-time car bidding with Fireba
 - Optimized performance with lazy loading
 - Cloud Functions for data import
 - Search and filter capabilities
+
+## Demo – Real-Time Bidding
+  <img src="https://github.com/user-attachments/assets/266d1998-ed37-471e-8076-3ef8ee7dd588" width="520px" />
 
 ## Tech Stack
 
@@ -172,7 +176,7 @@ firebase login
 firebase init
 ```
 
-Select these features:
+Select these :
 
 - Firestore
 - Functions
