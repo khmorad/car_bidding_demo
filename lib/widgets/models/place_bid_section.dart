@@ -33,10 +33,9 @@ class PlaceBidSection extends StatelessWidget {
       child: StreamBuilder<List<BidModel>>(
         stream: bidService.streamBidsForSubModel(submodelId),
         builder: (context, snapshot) {
-          final currentHighestBid =
-              (snapshot.data?.isNotEmpty ?? false)
-                  ? snapshot.data!.first.amount
-                  : 0.0;
+          final currentHighestBid = (snapshot.data?.isNotEmpty ?? false)
+              ? snapshot.data!.first.amount
+              : 0.0;
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -66,9 +65,7 @@ class PlaceBidSection extends StatelessWidget {
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                      color: Colors.grey.shade300,
-                    ),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -82,9 +79,7 @@ class PlaceBidSection extends StatelessWidget {
               const SizedBox(height: 12),
               ElevatedButton(
                 onPressed: () async {
-                  final amount = double.tryParse(
-                    bidController.text.trim(),
-                  );
+                  final amount = double.tryParse(bidController.text.trim());
 
                   if (amount == null || amount <= 0) {
                     ScaffoldMessenger.of(context).showSnackBar(

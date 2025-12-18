@@ -16,10 +16,7 @@ class BidHistoryList extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                const Icon(
-                  Icons.history,
-                  color: Color(0xFF667eea),
-                ),
+                const Icon(Icons.history, color: Color(0xFF667eea)),
                 const SizedBox(width: 8),
                 const Text(
                   'Bid History',
@@ -117,9 +114,7 @@ class BidHistoryList extends StatelessWidget {
                                       ],
                                     )
                                   : null,
-                              color: isHighest
-                                  ? null
-                                  : Colors.grey.shade200,
+                              color: isHighest ? null : Colors.grey.shade200,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Icon(
@@ -143,10 +138,7 @@ class BidHistoryList extends StatelessWidget {
                             ),
                           ),
                           subtitle: Text(
-                            bid.createdAt
-                                .toLocal()
-                                .toString()
-                                .substring(0, 19),
+                            bid.createdAt.toLocal().toString().substring(0, 19),
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey.shade600,

@@ -28,11 +28,7 @@ class HighestBidCard extends StatelessWidget {
           const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.emoji_events,
-                color: Colors.amber,
-                size: 28,
-              ),
+              Icon(Icons.emoji_events, color: Colors.amber, size: 28),
               SizedBox(width: 8),
               Text(
                 'Current Highest Bid',

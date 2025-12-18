@@ -26,10 +26,7 @@ class ModelDetailAppBar extends StatelessWidget {
       ),
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: onBack,
-          ),
+          IconButton(icon: const Icon(Icons.arrow_back), onPressed: onBack),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
