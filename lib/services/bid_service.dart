@@ -4,10 +4,10 @@ import '../models/bid.dart';
 class BidService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  Stream<List<BidModel>> streamBidsForModel(String modelId) {
+  Stream<List<BidModel>> streamBidsForSubModel(String submodelId) {
     return _db
         .collection('bids')
-        .where('model_id', isEqualTo: modelId)
+        .where('submodel_id', isEqualTo: submodelId)
         .orderBy('amount', descending: true)
         .snapshots()
         .map((snapshot) {
@@ -18,12 +18,12 @@ class BidService {
   }
 
   Future<void> placeBid({
-    required String modelId,
+    required String submodelId,
     required String userId,
     required double amount,
   }) async {
     await _db.collection('bids').add({
-      'model_id': modelId,
+      'submodel_id': submodelId,
       'user_id': userId,
       'amount': amount,
       'created_at':
