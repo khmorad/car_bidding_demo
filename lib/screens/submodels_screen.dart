@@ -103,7 +103,9 @@ class _SubModelScreenState extends State<SubModelScreen> {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 }
                 final submodels = (snapshot.data ?? []);
-                print('Loaded submodels: ${submodels.map((s) => s.id).toList()}'); // <-- Add this line
+                print(
+                  'Loaded submodels: ${submodels.map((s) => s.id).toList()}',
+                ); // <-- Add this line
                 final filteredSubmodels = submodels
                     .where((s) => s.name.toLowerCase().contains(_searchQuery))
                     .toList();
@@ -125,9 +127,13 @@ class _SubModelScreenState extends State<SubModelScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.info_outline, color: Colors.blue),
+                              icon: const Icon(
+                                Icons.info_outline,
+                                color: Colors.blue,
+                              ),
                               tooltip: 'Show engine info',
-                              onPressed: () => _showEngineInfo(context, submodel.id),
+                              onPressed: () =>
+                                  _showEngineInfo(context, submodel.id),
                             ),
                             const Icon(Icons.arrow_forward_ios, size: 16),
                           ],

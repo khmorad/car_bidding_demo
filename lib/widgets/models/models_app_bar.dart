@@ -40,10 +40,7 @@ class ModelsAppBar extends StatelessWidget {
                 ),
                 const Text(
                   'Available Models',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF718096),
-                  ),
+                  style: TextStyle(fontSize: 14, color: Color(0xFF718096)),
                 ),
               ],
             ),

@@ -51,19 +51,13 @@ class MakersAppBar extends StatelessWidget {
                 ),
                 Text(
                   'Choose your favorite brand',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF718096),
-                  ),
+                  style: TextStyle(fontSize: 14, color: Color(0xFF718096)),
                 ),
               ],
             ),
           ),
           IconButton(
-            icon: const Icon(
-              Icons.logout,
-              color: Color(0xFF667eea),
-            ),
+            icon: const Icon(Icons.logout, color: Color(0xFF667eea)),
             onPressed: () {
               context.read<AuthCubit>().logout();
             },

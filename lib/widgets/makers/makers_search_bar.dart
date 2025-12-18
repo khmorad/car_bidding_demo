@@ -17,19 +17,14 @@ class MakersSearchBar extends StatelessWidget {
       onChanged: onChanged,
       decoration: InputDecoration(
         hintText: 'Search makers...',
-        prefixIcon: const Icon(
-          Icons.search,
-          color: Color(0xFF667eea),
-        ),
+        prefixIcon: const Icon(Icons.search, color: Color(0xFF667eea)),
         filled: true,
         fillColor: Colors.grey.shade100,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 12,
-        ),
+        contentPadding: const EdgeInsets.symmetric(vertical: 12),
       ),
     );
   }
