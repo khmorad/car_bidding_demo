@@ -56,16 +56,13 @@ A full-stack Flutter application demonstrating real-time car bidding with Fireba
 This project follows **Clean Architecture** principles with clear separation of concerns:
 
 ```
-┌─────────────────────────────────────────┐
-│           Presentation Layer            │
-│  (Screens, Widgets, BLoC/Cubit)         │
-├─────────────────────────────────────────┤
-│            Business Logic               │
-│         (Services, Cubits)              │
-├─────────────────────────────────────────┤
-│              Data Layer                 │
-│    (Models, Firestore Repository)       │
-└─────────────────────────────────────────┘
+Auth (Bloc)
+   ↓
+Routing (GoRouter)
+   ↓
+Screens
+   ├── Firestore Streams (Makers / Models / Bids)
+   └── Local UI State (search, input)
 ```
 
 ### Design Patterns Used
