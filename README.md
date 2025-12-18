@@ -165,13 +165,8 @@ VS Code with Flutter extension
 ### 1. Create Firebase Project
 
 ```bash
-# Install Firebase CLI
 npm install -g firebase-tools
-
-# Login to Firebase
 firebase login
-
-# Initialize Firebase in your project
 firebase init
 ```
 
@@ -183,90 +178,22 @@ Select these features:
 
 ### 2. Firestore Database Structure
 
-```
-users/
-  {userId}/
-    - email: string
-    - password: string (Note: use Firebase Auth in production!)
+- `users/` - User accounts (email, password)
+- `makers/` - Car manufacturers
+- `models/` - Car models (linked to makers)
+- `bids/` - Bids on car models (user, amount, timestamp)
 
-makers/
-  {makerId}/
-    - id: string
-    - name: string
+### 3. Firestore Security Rules
 
-models/
-  {modelId}/
-    - id: string
-    - name: string
-    - make_id: string
-    - year: string
+See `firestore.rules` for full security rules.
 
-bids/
-  {bidId}/
-    - model_id: string
-    - user_id: string
-    - amount: number
-    - created_at: timestamp
-```
+- Users can read their own data and create accounts.
+- Makers/models are read-only for users.
+- Bids can be created by authenticated users and are immutable.
 
-### 4. Firestore Security Rules
+### 4. Firestore Indexes
 
-```javascript
-// filepath: firestore.rules
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-
-    // Users collection
-    match /users/{userId} {
-      allow read: if request.auth != null;
-      allow create: if true; // Allow signup
-      allow update, delete: if request.auth.uid == userId;
-    }
-
-    // Makers collection (read-only for users)
-    match /makers/{makerId} {
-      allow read: if true;
-      allow write: if false; // Only via Cloud Functions
-    }
-
-    // Models collection (read-only for users)
-    match /models/{modelId} {
-      allow read: if true;
-      allow write: if false; // Only via Cloud Functions
-    }
-
-    // Bids collection
-    match /bids/{bidId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null
-                    && request.resource.data.user_id == request.auth.uid
-                    && request.resource.data.amount is number
-                    && request.resource.data.amount > 0;
-      allow update, delete: if false; // Bids are immutable
-    }
-  }
-}
-```
-
-### 5. Firestore Indexes
-
-```json
-// filepath: firestore.indexes.json
-{
-  "indexes": [
-    {
-      "collectionGroup": "bids",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "model_id", "order": "ASCENDING" },
-        { "fieldPath": "amount", "order": "DESCENDING" }
-      ]
-    }
-  ],
-  "fieldOverrides": []
-}
-```
+See `firestore.indexes.json` for composite indexes (e.g., for sorting bids by model and amount).
 
 Deploy indexes:
 
@@ -276,182 +203,65 @@ firebase deploy --only firestore:indexes
 
 ## Cloud Functions
 
-### Import CSV Data Function
-
-The `importCars` function reads CSV files from Cloud Storage and populates Firestore.
-
-**Setup:**
-
-1. **Upload CSV files to Firebase Storage:**
-
-   ```bash
-   # Create csv folder in Storage bucket
-   gsutil cp makes-sample.csv gs://your-project.appspot.com/csv/
-   gsutil cp models-sample.csv gs://your-project.appspot.com/csv/
-   ```
-
-2. **Deploy the function:**
-
-   ```bash
-   firebase deploy --only functions
-   ```
-
-3. **Trigger the import:**
-   ```bash
-   # Get your function URL from Firebase Console
-   curl https://REGION-PROJECT_ID.cloudfunctions.net/importCars
-   ```
-
-**Function Code Overview:**
+A Cloud Function (`importCars`) imports makers and models from CSV files stored in Firebase Storage. This is used to bootstrap Firestore data for the demo.
 
 ## Navigation
 
-**Navigation Examples:**
+Example:
 
 ```dart
-// Navigate to route
 context.go('/makers');
-
-// Navigate with path parameters
-context.go('/models/$makerId?makerName=$name');
-
-// Navigate with object
-context.go('/model', extra: carModel);
-
-// Go back
-context.pop();
 ```
 
 ## Screenshots
 
 still in progress
 
-## API Reference
+## Services
 
-### AuthService
-
-```dart
-class AuthService {
-  Future<User?> login(String email, String password);
-  Future<User?> register(String email, String password);
-}
-```
-
-### BidService
-
-```dart
-class BidService {
-  // Stream real-time bids for a model
-  Stream<List<BidModel>> streamBidsForModel(String modelId);
-
-  // Place a new bid
-  Future<void> placeBid({
-    required String modelId,
-    required String userId,
-    required double amount,
-  });
-}
-```
-
-### MakersService
-
-```dart
-class MakersService {
-  Stream<List<Maker>> getMakers();
-}
-```
-
-### ModelsService
-
-```dart
-class ModelsService {
-  Stream<List<CarModel>> getModelsByMaker(String makerId);
-}
-```
+Services encapsulate Firestore access (`AuthService`, `MakersService`, `ModelsService`, `BidService`) and expose stream-based APIs to support real-time UI updates.
 
 ## 💻 Development
 
 ### Run Tests
 
 ```bash
-# Unit tests
 flutter test
-
-# Integration tests
 flutter test integration_test/
-
-# Widget tests with coverage
 flutter test --coverage
 ```
 
 ### Code Quality
 
 ```bash
-# Format code
 flutter format lib/
-
-# Analyze code
 flutter analyze
-
-# Check for outdated dependencies
 flutter pub outdated
-```
-
-### Environment Configuration
-
-```dart
-// Create lib/config/env.dart
-class Environment {
-  static const String apiUrl = String.fromEnvironment('API_URL');
-  static const bool isProduction = bool.fromEnvironment('dart.vm.product');
-}
-```
-
-Run with environment variables:
-
-```bash
-flutter run --dart-define=API_URL=https://api.example.com
 ```
 
 ## 🚢 Deployment
 
 ### Android
 
-1. **Configure signing:**
+1. **Configure signing:**  
+   (See Flutter docs for keystore setup)
 
-   ```bash
-   # Generate keystore
-   keytool -genkey -v -keystore ~/upload-keystore.jks -keyalg RSA \
-           -keysize 2048 -validity 10000 -alias upload
-   ```
+2. **Build release APK:**  
+   `flutter build apk --release`
 
-2. **Build release APK:**
-
-   ```bash
-   flutter build apk --release
-   ```
-
-3. **Build App Bundle:**
-   ```bash
-   flutter build appbundle --release
-   ```
+3. **Build App Bundle:**  
+   `flutter build appbundle --release`
 
 ### iOS
 
 1. **Configure signing in Xcode**
-
-2. **Build IPA:**
-   ```bash
-   flutter build ipa --release
-   ```
+2. **Build IPA:**  
+   `flutter build ipa --release`
 
 ### Web
 
 ```bash
-# Build for web
 flutter build web --release
-
-# Deploy to Firebase Hosting
 firebase deploy --only hosting
 ```
 
