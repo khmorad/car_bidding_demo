@@ -180,10 +180,11 @@ Select these features:
 
 ### 2. Firestore Database Structure
 
-- `users/` - User accounts (email, password)
-- `makers/` - Car manufacturers
-- `models/` - Car models (linked to makers)
-- `bids/` - Bids on car models (user, amount, timestamp)
+- makers/ — Car manufacturers
+- models/ — Car models
+  - submodels/ — Trim/configuration variants
+  - engines/ — Engine configurations per model
+- bids/ — Bids placed on specific car submodels
 
 ### 3. Firestore Security Rules
 
@@ -274,3 +275,11 @@ firebase deploy --only hosting
 - Pluck team for the project requirements
 - Flutter and Firebase communities
 - Open source contributors
+
+## Scope & Design Decisions
+
+This project is intentionally scoped as a technical assessment rather than a production marketplace.
+
+- Submodel names may repeat to reflect real-world configuration data from the source CSVs.
+- Engine specifications are displayed contextually and adapt to available data.
+- UI components are modularized for clarity and maintainability over feature completeness.
