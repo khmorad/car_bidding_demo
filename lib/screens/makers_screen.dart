@@ -5,6 +5,10 @@ import '../services/makers_service.dart';
 import '../models/maker.dart';
 import '../bloc/auth_cubit.dart';
 import '../bloc/auth_state.dart';
+// Add imports for widgets
+import '../widgets/makers/makers_app_bar.dart';
+import '../widgets/makers/makers_search_bar.dart';
+import '../widgets/makers/makerts_card.dart';
 
 class MakersScreen extends StatefulWidget {
   const MakersScreen({super.key});
@@ -48,99 +52,17 @@ class _MakersScreenState extends State<MakersScreen> {
           child: SafeArea(
             child: Column(
               children: [
-                // Custom App Bar
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Icon(
-                              Icons.directions_car,
-                              color: Colors.white,
-                              size: 28,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          const Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Car Makers',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF2D3748),
-                                  ),
-                                ),
-                                Text(
-                                  'Choose your favorite brand',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0xFF718096),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.logout,
-                              color: Color(0xFF667eea),
-                            ),
-                            onPressed: () {
-                              context.read<AuthCubit>().logout();
-                            },
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      // Search Bar
-                      TextField(
-                        controller: _searchController,
-                        onChanged: (value) {
-                          setState(() {
-                            _searchQuery = value.toLowerCase();
-                          });
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Search makers...',
-                          prefixIcon: const Icon(
-                            Icons.search,
-                            color: Color(0xFF667eea),
-                          ),
-                          filled: true,
-                          fillColor: Colors.grey.shade100,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                // Use MakersAppBar widget
+                const MakersAppBar(),
+                const SizedBox(height: 16),
+                // Use MakersSearchBar widget
+                MakersSearchBar(
+                  controller: _searchController,
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value.toLowerCase();
+                    });
+                  },
                 ),
                 // Content
                 Expanded(
@@ -251,7 +173,8 @@ class _MakersScreenState extends State<MakersScreen> {
                         itemCount: makers.length,
                         itemBuilder: (context, index) {
                           final maker = makers[index];
-                          return _MakerCard(maker: maker);
+                          // Use MakerCard widget
+                          return MakerCard(maker: maker);
                         },
                       );
                     },
@@ -266,114 +189,4 @@ class _MakersScreenState extends State<MakersScreen> {
   }
 }
 
-class _MakerCard extends StatelessWidget {
-  final Maker maker;
-
-  const _MakerCard({required this.maker});
-
-  String _getLogoPath() {
-    // Convert maker name to lowercase and replace spaces with underscores
-    final formattedName = maker.name.toLowerCase().replaceAll(' ', '_');
-    final path = 'assets/$formattedName.png';
-    print('Trying to load: $path for maker: ${maker.name}'); // Debug
-    return path;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          context.go(
-            '/models/${maker.id}?makerName=${Uri.encodeComponent(maker.name)}',
-          );
-        },
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.white, Color(0xFFF7FAFC)],
-            ),
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF667eea).withOpacity(0.2),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Image.asset(
-                  _getLogoPath(),
-                  width: 40,
-                  height: 40,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    print(
-                      'Failed to load image for ${maker.name}: $error',
-                    ); // Debug
-                    return Container(
-                      width: 40,
-                      height: 40,
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                        ),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.directions_car,
-                        size: 40,
-                        color: Colors.white,
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Text(
-                  maker.name,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF2D3748),
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(height: 4),
-              const Icon(
-                Icons.arrow_forward_ios,
-                size: 14,
-                color: Color(0xFF667eea),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+// Remove _MakerCard class (now replaced by MakerCard widget)

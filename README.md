@@ -95,6 +95,8 @@ car_bidding_system/
 │   │   ├── makers_service.dart
 │   │   ├── models_service.dart
 │   │   └── bid_service.dart
+│   ├── widgets/                 # Reusable UI widgets
+│   │   └── ...                  # Custom widget files
 │   ├── router/                  # Navigation
 │   │   └── app_router.dart
 │   └── main.dart                # App entry point
@@ -220,6 +222,8 @@ Screenshots will be added once UI polish is complete.
 ## Services
 
 Services encapsulate Firestore access (`AuthService`, `MakersService`, `ModelsService`, `BidService`) and expose stream-based APIs to support real-time UI updates.
+
+**Widgets** are placed in the `lib/widgets/` directory and contain reusable UI components shared across screens.
 
 ## 💻 Development
 

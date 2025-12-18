@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../services/model_service.dart';
 import '../models/model.dart';
+// Add imports for widgets
+import '../widgets/models/models_app_bar.dart';
+import '../widgets/models/models_search_bar.dart';
+import '../widgets/models/model_card.dart';
 
 class ModelsScreen extends StatefulWidget {
   final String makerId;
@@ -46,80 +50,17 @@ class _ModelsScreenState extends State<ModelsScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              // Custom App Bar
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.arrow_back),
-                          onPressed: () => context.go('/makers'),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                widget.makerName,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF2D3748),
-                                ),
-                              ),
-                              const Text(
-                                'Available Models',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Color(0xFF718096),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    // Search Bar
-                    TextField(
-                      controller: _searchController,
-                      onChanged: (value) {
-                        setState(() {
-                          _searchQuery = value.toLowerCase();
-                        });
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Search models...',
-                        prefixIcon: const Icon(
-                          Icons.search,
-                          color: Color(0xFF667eea),
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey.shade100,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              // Use ModelsAppBar widget
+              ModelsAppBar(makerName: widget.makerName),
+              const SizedBox(height: 16),
+              // Use ModelsSearchBar widget
+              ModelsSearchBar(
+                controller: _searchController,
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value.toLowerCase();
+                  });
+                },
               ),
               // Content
               Expanded(
@@ -231,7 +172,8 @@ class _ModelsScreenState extends State<ModelsScreen> {
                       itemCount: models.length,
                       itemBuilder: (context, index) {
                         final model = models[index];
-                        return _ModelCard(
+                        // Use ModelCard widget
+                        return ModelCard(
                           model: model,
                           makerName: widget.makerName,
                         );
@@ -241,140 +183,6 @@ class _ModelsScreenState extends State<ModelsScreen> {
                 ),
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ModelCard extends StatelessWidget {
-  final CarModel model;
-  final String makerName;
-
-  const _ModelCard({required this.model, required this.makerName});
-
-  String _getLogoPath() {
-    final formattedName = makerName.toLowerCase().replaceAll(' ', '_');
-    return 'assets/$formattedName.png';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Colors.white, Color(0xFFF7FAFC)],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            // FIX: Navigate to /submodels with CarModel as extra
-            context.push('/submodels', extra: model);
-          },
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF667eea).withOpacity(0.2),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Image.asset(
-                    _getLogoPath(),
-                    width: 32,
-                    height: 32,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: 32,
-                        height: 32,
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                          ),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.directions_car,
-                          color: Colors.white,
-                          size: 32,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        model.name,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF2D3748),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.calendar_today,
-                            size: 14,
-                            color: Color(0xFF718096),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Year: ${model.year}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF718096),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF667eea).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(
-                    Icons.arrow_forward_ios,
-                    size: 16,
-                    color: Color(0xFF667eea),
-                  ),
-                ),
-              ],
-            ),
           ),
         ),
       ),
