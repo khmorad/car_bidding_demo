@@ -75,8 +75,11 @@ class _ModelsScreenState extends State<ModelsScreen> {
                     child: StreamBuilder<List<CarModel>>(
                       stream: _modelsService.getModelsByMaker(widget.makerId),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
                         }
 
                         if (snapshot.hasError) {
@@ -146,7 +149,9 @@ class _ModelsScreenState extends State<ModelsScreen> {
 
                         final models = snapshot.data!
                             .where(
-                              (model) => model.name.toLowerCase().contains(_searchQuery),
+                              (model) => model.name.toLowerCase().contains(
+                                _searchQuery,
+                              ),
                             )
                             .toList();
 

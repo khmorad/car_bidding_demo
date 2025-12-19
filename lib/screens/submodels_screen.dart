@@ -116,7 +116,9 @@ class _SubModelScreenState extends State<SubModelScreen> {
                       'Loaded submodels: ${submodels.map((s) => s.id).toList()}',
                     );
                     final filteredSubmodels = submodels
-                        .where((s) => s.name.toLowerCase().contains(_searchQuery))
+                        .where(
+                          (s) => s.name.toLowerCase().contains(_searchQuery),
+                        )
                         .toList();
                     if (filteredSubmodels.isEmpty) {
                       return const Center(child: Text('No submodels found.'));
