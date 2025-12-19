@@ -65,7 +65,9 @@ class _MakersScreenState extends State<MakersScreen> {
                 // Center and constrain search bar
                 Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 700), // <-- Increased max width here
+                    constraints: const BoxConstraints(
+                      maxWidth: 700,
+                    ), // <-- Increased max width here
                     child: MakersSearchBar(
                       controller: _searchController,
                       onChanged: (value) {
@@ -89,8 +91,11 @@ class _MakersScreenState extends State<MakersScreen> {
                           child: StreamBuilder<List<Maker>>(
                             stream: _makersService.getMakers(),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const Center(child: CircularProgressIndicator());
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
                               }
 
                               if (snapshot.hasError) {
@@ -151,9 +156,11 @@ class _MakersScreenState extends State<MakersScreen> {
                               }
 
                               final makers = snapshot.data!
-                                  .where((maker) => maker.name
-                                      .toLowerCase()
-                                      .contains(_searchQuery))
+                                  .where(
+                                    (maker) => maker.name
+                                        .toLowerCase()
+                                        .contains(_searchQuery),
+                                  )
                                   .toList();
 
                               if (makers.isEmpty) {
