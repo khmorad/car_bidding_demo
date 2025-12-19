@@ -53,133 +53,142 @@ class _ModelsScreenState extends State<ModelsScreen> {
               // Use ModelsAppBar widget
               ModelsAppBar(makerName: widget.makerName),
               const SizedBox(height: 16),
-              // Use ModelsSearchBar widget
-              ModelsSearchBar(
-                controller: _searchController,
-                onChanged: (value) {
-                  setState(() {
-                    _searchQuery = value.toLowerCase();
-                  });
-                },
+              // Center and constrain search bar
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 700),
+                  child: ModelsSearchBar(
+                    controller: _searchController,
+                    onChanged: (value) {
+                      setState(() {
+                        _searchQuery = value.toLowerCase();
+                      });
+                    },
+                  ),
+                ),
               ),
               // Content
               Expanded(
-                child: StreamBuilder<List<CarModel>>(
-                  stream: _modelsService.getModelsByMaker(widget.makerId),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 900),
+                    child: StreamBuilder<List<CarModel>>(
+                      stream: _modelsService.getModelsByMaker(widget.makerId),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
 
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.error_outline,
-                              size: 64,
-                              color: Colors.red.shade300,
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  size: 64,
+                                  color: Colors.red.shade300,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Error loading models',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  '${snapshot.error}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Error loading models',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade700,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              '${snapshot.error}',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey.shade600,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      );
-                    }
+                          );
+                        }
 
-                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.car_rental,
-                              size: 64,
-                              color: Colors.grey.shade400,
+                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.car_rental,
+                                  size: 64,
+                                  color: Colors.grey.shade400,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No models available',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Check back later for new models',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No models available',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade700,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Check back later for new models',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey.shade600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
+                          );
+                        }
 
-                    final models = snapshot.data!
-                        .where(
-                          (model) =>
-                              model.name.toLowerCase().contains(_searchQuery),
-                        )
-                        .toList();
+                        final models = snapshot.data!
+                            .where(
+                              (model) => model.name.toLowerCase().contains(_searchQuery),
+                            )
+                            .toList();
 
-                    if (models.isEmpty) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.search_off,
-                              size: 64,
-                              color: Colors.grey.shade400,
+                        if (models.isEmpty) {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  size: 64,
+                                  color: Colors.grey.shade400,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No results found',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No results found',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
+                          );
+                        }
 
-                    return ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: models.length,
-                      itemBuilder: (context, index) {
-                        final model = models[index];
-                        // Use ModelCard widget
-                        return ModelCard(
-                          model: model,
-                          makerName: widget.makerName,
+                        return ListView.builder(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: models.length,
+                          itemBuilder: (context, index) {
+                            final model = models[index];
+                            // Use ModelCard widget
+                            return ModelCard(
+                              model: model,
+                              makerName: widget.makerName,
+                            );
+                          },
                         );
                       },
-                    );
-                  },
+                    ),
+                  ),
                 ),
               ),
             ],

@@ -55,48 +55,69 @@ class _ModelDetailScreenState extends State<ModelDetailScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              // Custom App Bar
+              // AppBar is now full width (not inside Center/ConstrainedBox)
               ModelDetailAppBar(
                 submodelName: widget.submodel.name,
                 onBack: () => context.pop(),
               ),
               // Content
               Expanded(
-                child: StreamBuilder<List<BidModel>>(
-                  stream: _bidService.streamBidsForSubModel(widget.submodel.id),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 900),
+                    child: StreamBuilder<List<BidModel>>(
+                      stream: _bidService.streamBidsForSubModel(
+                        widget.submodel.id,
+                      ),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
 
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Error loading bids: ${snapshot.error}'),
-                      );
-                    }
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Text(
+                              'Error loading bids: ${snapshot.error}',
+                            ),
+                          );
+                        }
 
-                    final bids = snapshot.data ?? [];
-                    final highestBid = bids.isNotEmpty
-                        ? bids.first.amount
-                        : 0.0;
+                        final bids = snapshot.data ?? [];
+                        final highestBid = bids.isNotEmpty
+                            ? bids.first.amount
+                            : 0.0;
 
-                    return Column(
-                      children: [
-                        // Highest Bid Card
-                        HighestBidCard(highestBid: highestBid),
-                        // Bid History Header & List
-                        BidHistoryList(bids: bids),
-                      ],
-                    );
-                  },
+                        return Column(
+                          children: [
+                            // Highest Bid Card
+                            HighestBidCard(highestBid: highestBid),
+                            // Bid History Header & List
+                            BidHistoryList(bids: bids),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
-              // Place Bid Section
-              PlaceBidSection(
-                submodelId: widget.submodel.id,
-                userId: userId,
-                bidController: _bidController,
-                bidService: _bidService,
+              // Place Bid Section: full width background, constrained input/button
+              Container(
+                width: double.infinity,
+                color: Colors.white,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 900),
+                    child: PlaceBidSection(
+                      submodelId: widget.submodel.id,
+                      userId: userId,
+                      bidController: _bidController,
+                      bidService: _bidService,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
