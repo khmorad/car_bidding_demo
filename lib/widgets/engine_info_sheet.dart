@@ -9,48 +9,66 @@ class EngineInfoSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      backgroundColor: theme.colorScheme.surface,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.speed, color: theme.colorScheme.primary, size: 28),
-                const SizedBox(width: 10),
-                Text(
-                  'Engine Info',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
+    return Align(
+      alignment: Alignment.center,
+      child: Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: theme.colorScheme.surface,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 420, maxHeight: 420),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.speed,
+                        color: theme.colorScheme.primary,
+                        size: 28,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        'Engine Info',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.of(context).pop(),
+                        tooltip: 'Close',
+                      ),
+                    ],
                   ),
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                  tooltip: 'Close',
-                ),
-              ],
-            ),
-            const SizedBox(height: 18),
-            if (engine.size != null)
-              _InfoRow(icon: Icons.straighten, label: '${engine.size}L engine'),
-            if (engine.driveType != null || engine.transmission != null)
-              _InfoRow(
-                icon: Icons.settings,
-                label: [
-                  if (engine.driveType != null) engine.driveType,
-                  if (engine.transmission != null) engine.transmission,
-                ].where((e) => e != null && e.isNotEmpty).join(' • '),
+                  const SizedBox(height: 18),
+                  if (engine.size != null)
+                    _InfoRow(
+                      icon: Icons.straighten,
+                      label: '${engine.size}L engine',
+                    ),
+                  if (engine.driveType != null || engine.transmission != null)
+                    _InfoRow(
+                      icon: Icons.settings,
+                      label: [
+                        if (engine.driveType != null) engine.driveType,
+                        if (engine.transmission != null) engine.transmission,
+                      ].where((e) => e != null && e.isNotEmpty).join(' • '),
+                    ),
+                  if (engine.fuelType != null)
+                    _InfoRow(
+                      icon: Icons.local_gas_station,
+                      label: engine.fuelType!,
+                    ),
+                  // Add more rows as needed, e.g. horsepower, valves, etc.
+                ],
               ),
-            if (engine.fuelType != null)
-              _InfoRow(icon: Icons.local_gas_station, label: engine.fuelType!),
-            // Add more rows as needed, e.g. horsepower, valves, etc.
-          ],
+            ),
+          ),
         ),
       ),
     );
