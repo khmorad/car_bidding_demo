@@ -15,10 +15,7 @@ class EngineInfoSheet extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         backgroundColor: theme.colorScheme.surface,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: 420,
-            maxHeight: 420,
-          ),
+          constraints: const BoxConstraints(maxWidth: 420, maxHeight: 420),
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
@@ -28,7 +25,11 @@ class EngineInfoSheet extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.speed, color: theme.colorScheme.primary, size: 28),
+                      Icon(
+                        Icons.speed,
+                        color: theme.colorScheme.primary,
+                        size: 28,
+                      ),
                       const SizedBox(width: 10),
                       Text(
                         'Engine Info',
@@ -46,7 +47,10 @@ class EngineInfoSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: 18),
                   if (engine.size != null)
-                    _InfoRow(icon: Icons.straighten, label: '${engine.size}L engine'),
+                    _InfoRow(
+                      icon: Icons.straighten,
+                      label: '${engine.size}L engine',
+                    ),
                   if (engine.driveType != null || engine.transmission != null)
                     _InfoRow(
                       icon: Icons.settings,
@@ -56,7 +60,10 @@ class EngineInfoSheet extends StatelessWidget {
                       ].where((e) => e != null && e.isNotEmpty).join(' • '),
                     ),
                   if (engine.fuelType != null)
-                    _InfoRow(icon: Icons.local_gas_station, label: engine.fuelType!),
+                    _InfoRow(
+                      icon: Icons.local_gas_station,
+                      label: engine.fuelType!,
+                    ),
                   // Add more rows as needed, e.g. horsepower, valves, etc.
                 ],
               ),
